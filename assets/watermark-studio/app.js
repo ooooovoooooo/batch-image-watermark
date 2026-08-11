@@ -84,8 +84,8 @@ function renderToCanvas(image, canvas) {
     const angle = state.rotation * Math.PI / 180;
     const rotatedWidth = Math.abs(metrics.width * Math.cos(angle)) + Math.abs(metrics.height * Math.sin(angle));
     const rotatedHeight = Math.abs(metrics.width * Math.sin(angle)) + Math.abs(metrics.height * Math.cos(angle));
-    const stepX = Math.max(1, rotatedWidth + spacing);
-    const stepY = Math.max(1, rotatedHeight + spacing);
+    const stepX = Math.max(8, rotatedWidth + spacing);
+    const stepY = Math.max(8, rotatedHeight + spacing);
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     const startX = centerX - Math.ceil((centerX + stepX) / stepX) * stepX;
