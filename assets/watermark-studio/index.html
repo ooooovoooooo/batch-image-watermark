@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="在浏览器本地批量添加文字或图片水印" />
+  <title>水印工坊 · 批量图片加水印</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="#" aria-label="水印工坊首页"><span class="brand-mark">U</span><strong>水印工坊</strong></a>
+    <div class="title-block"><h1>批量图片加水印</h1><p><span>✓</span> 图片仅在本地处理，不会上传服务器</p></div>
+    <div class="header-actions">
+      <a href="#privacy">使用说明</a>
+      <button class="primary-button" id="processButton" type="button" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg>
+        处理并下载 ZIP
+      </button>
+    </div>
+  </header>
+
+  <main class="editor-shell">
+    <aside class="file-rail" aria-label="图片列表">
+      <label class="compact-dropzone" id="dropzone" for="imageInput">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 14v5h14v-5"/></svg>
+        <strong>点击或拖拽图片到这里</strong>
+        <span>支持 JPG、PNG、WebP，可多选</span>
+        <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden />
+      </label>
+      <button class="clear-list" id="clearButton" type="button" disabled>清空列表</button>
+      <div class="file-heading"><strong id="fileCount">尚未上传图片</strong></div>
+      <div class="thumbs" id="thumbs" aria-label="已上传图片"></div>
+    </aside>
+
+    <section class="canvas-area" aria-label="水印预览">
+      <div class="canvas-toolbar">
+        <span>实时预览</span>
+        <div class="canvas-meta"><i></i> 本地画布</div>
+      </div>
+      <div class="preview-stage" id="previewStage">
+        <div class="empty-preview" id="emptyPreview">
+          <div class="empty-icon">▧</div><strong>添加图片开始设计</strong><span>选择左侧图片后将在这里实时预览水印</span>
+        </div>
+        <canvas id="previewCanvas" hidden></canvas>
+      </div>
+    </section>
+
+    <aside class="settings" aria-label="水印设置">
+      <div class="tabs" role="tablist">
+        <button class="tab active" type="button" data-mode="text" role="tab" aria-selected="true">文字水印</button>
+        <button class="tab" type="button" data-mode="logo" role="tab" aria-selected="false">图片水印</button>
+      </div>
+      <div class="settings-body">
+        <div class="text-settings">
+          <label class="field"><span>水印文字</span><input id="watermarkText" value="禁止外传" maxlength="50" /></label>
+          <label class="field"><span>字号</span><input id="fontSize" type="number" min="12" max="200" value="42" /></label>
+          <label class="field"><span>字体颜色</span><span class="color-field"><input id="textColor" type="color" value="#ffffff" /><code id="colorValue">#FFFFFF</code></span></label>
+        </div>
+
+        <div class="logo-settings" hidden>
+          <label class="field"><span>上传 Logo</span><span class="file-button">选择图片<input id="logoInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden /></span></label>
+          <p class="field-hint" id="logoName">推荐使用透明背景 PNG</p>
+          <label class="field"><span>Logo 大小</span><span class="range-wrap"><input id="logoSize" type="range" min="8" max="60" value="22" /><output id="logoSizeValue">22%</output></span></label>
+        </div>
+
+        <label class="field"><span>透明度</span><span class="range-wrap"><input id="opacity" type="range" min="5" max="100" value="35" /><span class="number-unit"><input id="opacityValue" type="number" min="5" max="100" value="35" aria-label="透明度数值" /><span>%</span></span></span></label>
+
+        <label class="field"><span>旋转角度</span><span class="range-wrap"><input id="rotation" type="range" min="0" max="360" value="0" /><span class="number-unit"><input id="rotationValue" type="number" min="0" max="360" value="0" aria-label="旋转角度数值" /><span>°</span></span></span></label>
+
+        <fieldset class="field choice-field"><legend>排列方式</legend><div class="segmented two" id="layoutChoices">
+          <button type="button" data-value="single">单个</button><button class="active" type="button" data-value="tile">平铺</button>
+        </div></fieldset>
+
+        <label class="field" id="gapField"><span>排列间距</span><span class="range-wrap"><input id="gap" type="range" min="5" max="80" value="36" /><span class="number-unit"><input id="gapValue" type="number" min="5" max="80" value="36" aria-label="排列间距数值" /><span>%</span></span></span></label>
+
+        <fieldset class="field choice-field" id="positionField" hidden><legend>位置</legend><div class="position-grid" id="positionGrid" aria-label="水印位置">
+          <button type="button" data-value="top-left" aria-label="左上"></button><button type="button" data-value="top-center" aria-label="中上"></button><button type="button" data-value="top-right" aria-label="右上"></button>
+          <button type="button" data-value="center-left" aria-label="左中"></button><button class="active" type="button" data-value="center" aria-label="居中"></button><button type="button" data-value="center-right" aria-label="右中"></button>
+          <button type="button" data-value="bottom-left" aria-label="左下"></button><button type="button" data-value="bottom-center" aria-label="中下"></button><button type="button" data-value="bottom-right" aria-label="右下"></button>
+        </div></fieldset>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="status-bar" id="privacy">
+    <div class="status" id="status"><span class="status-dot">i</span><div><strong>等待上传图片</strong><small>选择图片后即可实时预览</small></div></div>
+    <p>⌾ 全部处理均在你的浏览器中完成 · 原图不会被修改</p>
+  </footer>
+  <script src="./vendor/jszip.min.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
