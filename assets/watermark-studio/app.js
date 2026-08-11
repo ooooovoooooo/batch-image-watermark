@@ -80,13 +80,18 @@ function renderToCanvas(image, canvas) {
   const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.drawImage(image, 0, 0);
   const metrics = watermarkMetrics(ctx, canvas.width); if (!metrics) return;
   if (state.layout === 'tile') {
-    const spacing = Math.min(canvas.width, canvas.height) * Number(els.gap.value) / 100;
-    const gapX = metrics.width + spacing;
-    const gapY = metrics.height + spacing;
-    let row = 0;
-    for (let y = -gapY / 2; y < canvas.height + gapY; y += gapY) {
-      const offset = row++ % 2 ? gapX / 2 : 0;
-      for (let x = -gapX / 2 + offset; x < canvas.width + gapX; x += gapX) drawOne(ctx, metrics, x, y);
+    const spacing = Number(els.gap.value);
+    const angle = state.rotation * Math.PI / 180;
+    const rotatedWidth = Math.abs(metrics.width * Math.cos(angle)) + Math.abs(metrics.height * Math.sin(angle));
+    const rotatedHeight = Math.abs(metrics.width * Math.sin(angle)) + Math.abs(metrics.height * Math.cos(angle));
+    const stepX = Math.max(1, rotatedWidth + spacing);
+    const stepY = Math.max(1, rotatedHeight + spacing);
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const startX = centerX - Math.ceil((centerX + stepX) / stepX) * stepX;
+    const startY = centerY - Math.ceil((centerY + stepY) / stepY) * stepY;
+    for (let y = startY; y <= canvas.height + stepY; y += stepY) {
+      for (let x = startX; x <= canvas.width + stepX; x += stepX) drawOne(ctx, metrics, x, y);
     }
   } else {
     const margin = Math.min(canvas.width, canvas.height) * .06;
