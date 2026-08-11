@@ -1,10 +1,11 @@
 # Batch Image Watermark
 
-一个用于批量给图片添加文字或 Logo 水印的 Codex Skill。图片在本机处理，输出到独立目录，不覆盖原图。
+一个用于给图片添加文字或 Logo 水印的 Codex Skill，包含自动批处理脚本和本地可视化网页。图片只在本机处理，不覆盖原图。
 
 ## 功能
 
 - 批量处理单张图片或整个文件夹
+- 内置“水印工坊”网页，支持实时预览和 ZIP 下载
 - 支持文字水印和图片 Logo 水印
 - 支持单个水印与平铺水印
 - 支持透明度、旋转角度、排列间距、位置和边距
@@ -22,8 +23,15 @@
 ├── requirements.txt
 ├── agents/
 │   └── openai.yaml
+├── assets/
+│   └── watermark-studio/
+│       ├── index.html
+│       ├── styles.css
+│       ├── app.js
+│       └── vendor/jszip.min.js
 └── scripts/
-    └── watermark.py
+    ├── watermark.py
+    └── serve_web.py
 ```
 
 ## 安装为 Codex Skill
@@ -64,7 +72,25 @@ Logo 水印示例：
 使用 $batch-image-watermark，递归处理这个素材文件夹及其子文件夹，添加“仅供预览”文字水印，并保留原来的目录结构。
 ```
 
-## 手动运行
+也可以直接告诉 Codex：
+
+```text
+使用 $batch-image-watermark，打开本地水印网页。
+```
+
+## 启动本地网页
+
+网页模式不需要安装 Pillow，只需要 Python 3.9 或更高版本。在仓库目录运行：
+
+```bash
+python3 scripts/serve_web.py
+```
+
+浏览器会自动打开 [http://127.0.0.1:8127/](http://127.0.0.1:8127/)。如果没有自动打开，可以手动访问这个地址。使用期间请保持命令窗口运行，结束时按 `Ctrl+C`。
+
+网页中的图片处理完全在浏览器本地完成，不会上传到服务器。默认地址仅限当前电脑访问。
+
+## 手动批处理
 
 ### 1. 准备环境
 
