@@ -1,0 +1,4 @@
+interface:
+  display_name: "批量图片加水印"
+  short_description: "批量添加文字或 Logo 水印，统一位置透明度并保留全部原图"
+  default_prompt: "Use $batch-image-watermark to add a consistent watermark to my images without overwriting the originals."
